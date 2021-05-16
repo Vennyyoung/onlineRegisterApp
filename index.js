@@ -12,16 +12,16 @@ mongoose.connect(
     {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        useFindAndModify: false,
+        useFindAndModify: false
     },
     (err) => {
         if (err) {
-            console.log(err);
+            console.log(err)
         } else {
-            console.log("Data base Connected successfully");
+            console.log("Data base Connected successfully")
         }
     }
-);
+)
 
 //create schema
 const individualSchema = new mongoose.Schema({
@@ -32,27 +32,22 @@ const individualSchema = new mongoose.Schema({
     age: Number,
 });
 
-const individuals = mongoose.model("individuals", individualSchema);
+const Individuals = mongoose.model("Individuals", individualSchema);
 
 //POST request to /register to register a new individual
 app.post("/register", function (req, res) {
-    //request new individuals details from req.body
+    //retrieve new individual's details from req.body
 
-    individuals.create(
-        {
-            name: req.body.name,
+Individuals.create(
+        {   name:req.body.name,
             email: req.body.email,
             state: req.body.state,
             occupation: req.body.occupation,
             age: req.body.age,
-        },
-        (err, newIndividual) => {
+        },(err, newIndividual) => {
             if (err) {
-                return res.status(500).json({ message: err });
-            } else {
-                return res
-                    .status(200)
-                    .json({ message: "New individual registered", newIndividual });
+                return res.status(500).json({ message: err })
+            } else {return res.status(200).json({ message: "New individual registered", newIndividual })
             }
         }
     );
@@ -61,18 +56,16 @@ app.post("/register", function (req, res) {
 });
 //GET request to /indivuals to fetch all registered individuals
 app.get("/register", (req, res) => {
-    individuals.find({}, (err, register) => {
-        if (err) {
-            return res.status(500).json({ message: err });
-        } else {
-            return res.status(200).json({ register });
+    //fetch all individuals
+    Individuals.find({}, (err, register) => {
+        if (err) {return res.status(500).json({ message: err });
+        } else {return res.status(200).json({ register });
         }
     });
 });
-
 //GET request to /indivuals:id to fetch a single registered individual
 app.get("/register/:id", (req, res) => {
-    individuals.findOne({ _id: req.params.id }, (err, individual) => {
+    Individuals.findById(req.params.id, (err, individual) => {
         if (err) {
             return res.status(500).json({ message: err });
         } else if (!individual) {
@@ -82,10 +75,9 @@ app.get("/register/:id", (req, res) => {
         }
     });
 });
-//PUT request to /indivuals:id to update a registered individual's details
-
+//PUT request to update a single individual's details 
 app.put("/register/:id", (req, res) => {
-    individual.findByIdAndUpdate(
+    Individuals.findByIdAndUpdate(
         req.params.id,
         {
             name: req.body.name,
@@ -105,7 +97,7 @@ app.put("/register/:id", (req, res) => {
                         return res.status(400).json({ message: err });
                     } else {
                         return res.status(200).json({
-                            message: "National Online Register Updated Successfully",
+                            message: "Register Updated Successfully"
                         });
                     }
                 });
@@ -114,16 +106,17 @@ app.put("/register/:id", (req, res) => {
     );
 });
 //DELETE request to /indivuals:id to delete a registered individuals details
-app.delete("/register/id", (req, res) => {
-    individual.findByIdAndDelete(req.params.id, (err, individual) => {
+app.delete("/register/:id", (req, res) => {
+    Individuals.findByIdAndDelete(req.params.id, (err, individual) => {
         if (err) {
-            return res.status(500).json({ message: err });
+            return res.status(500).json({ message: err })
         } else if (!individual) {
-            return res.status(404).json({ message: "Individual Was not found" });
+            return res.status(404).json({ message: "Individual Was not found" })
         } else {
             return res.status(200).json({ message: "Individual deleted successfully" })
         }
     });
 });
+
 
 app.listen(port, () => console.log(`app listening on port ${port}`));
